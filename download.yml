@@ -1,0 +1,36 @@
+name: Download Kaggle Notebook
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  download-kaggle-notebook:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Kaggle API
+      run: pip install kaggle
+
+    - name: Configure Kaggle credentials
+      run: |
+        mkdir -p ~/.kaggle
+        echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
+        chmod 600 ~/.kaggle/kaggle.json
+
+    - name: Download Kaggle notebook
+      run: kaggle kernels pull revanthonteddu/treasury-bills-with-cmb -p notebooks
+      # Replace 'revanthonteddu/treasury-bills-with-cmb' with the actual notebook path and 'notebooks' with the desired directory
+
+    - name: List downloaded files
+      run: ls -la notebooks
+      # Replace 'notebooks' with the directory where the notebook is downloaded
